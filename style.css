@@ -19,7 +19,7 @@ body {
     color: var(--text-color);
     font-family: var(--font-family);
     line-height: 1.6;
-    overflow-x: hidden;
+    overflow: hidden; /* Prevent scrollbars from layout shift */
 }
 
 #grain {
@@ -28,7 +28,7 @@ body {
     left: -50%;
     width: 200%;
     height: 200%;
-    background-image: url('/catalogue_de_produits_by_shinybloom99511140/grain.png');
+    background-image: url('/images/grain.png');
     animation: grain 0.8s steps(10) infinite;
     z-index: -1;
     opacity: 0.04;
@@ -241,4 +241,3 @@ tbody tr.selected {
     font-size: 1rem;
     color: #aaa;
 }
-

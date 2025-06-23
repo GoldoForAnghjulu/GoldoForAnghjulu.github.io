@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchAndParseProducts() {
         try {
-            const response = await fetch('/catalogue_de_produits_by_shinybloom99511140/message.txt');
+            const response = await fetch('/message.txt');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -25,12 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const description = parts.slice(1).join('–').trim();
                 
                 let imageName = `${name.toLowerCase().replace(/[\s–]+/g, '-')}.png`;
-                let imageUrl = `/catalogue_de_produits_by_shinybloom99511140/Image/${imageName}`;
+                let imageUrl = `/images/${imageName}`;
                 
                 return {
                     name,
                     description,
-                    price: '€',
+                    price: 'Prix sur demande',
                     imageUrl: imageUrl
                 };
             });
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const row = document.createElement('tr');
             row.dataset.index = index;
             row.innerHTML = `
-                <td><img src="${product.imageUrl}" alt="${product.name}" class="product-image" onerror="this.src='/catalogue_de_produits_by_shinybloom99511140/Image/placeholder.png'; this.onerror=null;"></td>
+                <td><img src="${product.imageUrl}" alt="${product.name}" class="product-image" onerror="this.src='/images/placeholder.png'; this.onerror=null;"></td>
                 <td class="product-name">${product.name}</td>
                 <td class="product-description">${product.description}</td>
                 <td class="product-price">${product.price}</td>
@@ -144,16 +144,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (index < 0 || index >= products.length) return;
         const product = products[index];
         modalImg.src = product.imageUrl;
-        modalImg.onerror = () => { modalImg.src = '/catalogue_de_produits_by_shinybloom99511140/Image/placeholder.png'; };
+        modalImg.onerror = () => { modalImg.src = '/images/placeholder.png'; };
         modalName.textContent = product.name;
         modalDescription.textContent = product.description;
-        modalPrice.textContent = `Prix: ${product.price}`;
+        modalPrice.textContent = `${product.price}`;
         
         modal.classList.add('visible');
+        document.body.style.overflow = 'hidden';
     }
 
     function hideModal() {
         modal.classList.remove('visible');
+        document.body.style.overflow = '';
     }
 
     closeModalButton.addEventListener('click', hideModal);
