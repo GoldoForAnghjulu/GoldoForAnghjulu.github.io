@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             row.dataset.index = index;
             row.innerHTML = `
                 <td><img src="${product.imageUrl}" alt="${product.name}" class="product-image" onerror="this.src='placeholder.png'; this.onerror=null;"></td>
-                <td class="product-name">${product.name}</td>
+                <td class="product-name"><button class="product-button" data-index="${index}">${product.name}</button></td>
                 <td class="product-description">${product.description}</td>
                 <td class="product-price">${product.price}</td>
             `;
@@ -72,6 +72,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         addEventListenersToRows();
+
+document.querySelectorAll('.product-button').forEach(button => {
+    button.addEventListener('click', (e) => {
+        e.stopPropagation(); // Pour éviter les conflits avec le click sur la ligne
+        const index = parseInt(button.dataset.index);
+        showModal(index);
+    });
+});
+
+
     }
     
     function addEventListenersToRows() {
