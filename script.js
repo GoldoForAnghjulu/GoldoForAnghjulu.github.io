@@ -24,9 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const name = parts[0].trim();
                 const description = parts.slice(1).join('–').trim();
                 
-                // Construct the image URL. The images are in the root folder.
+                // Construct the image URL to be inside an "Image" folder
                 let imageName = `${name.toLowerCase().replace(/[\s–]+/g, '-')}.png`;
-                let imageUrl = `${imageName}`;
+                let imageUrl = `Image/${imageName}`;
                 
                 return {
                     name,
@@ -49,8 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const row = document.createElement('tr');
             row.dataset.index = index;
             row.innerHTML = `
-                <td><img src="${product.imageUrl}" alt="${product.name}" class="product-image" onerror="this.src='placeholder.png'; this.onerror=null;"></td>
-                <td class="product-name"><button class="product-button" data-index="${index}">${product.name}</button></td>
+                <td><img src="${product.imageUrl}" alt="${product.name}" class="product-image" onerror="this.src='Image/placeholder.png'; this.onerror=null;"></td>
+                <td class="product-name">${product.name}</td>
                 <td class="product-description">${product.description}</td>
                 <td class="product-price">${product.price}</td>
             `;
@@ -72,16 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         addEventListenersToRows();
-
-document.querySelectorAll('.product-button').forEach(button => {
-    button.addEventListener('click', (e) => {
-        e.stopPropagation(); // Pour éviter les conflits avec le click sur la ligne
-        const index = parseInt(button.dataset.index);
-        showModal(index);
-    });
-});
-
-
     }
     
     function addEventListenersToRows() {
@@ -149,7 +139,7 @@ document.querySelectorAll('.product-button').forEach(button => {
         if (index < 0 || index >= products.length) return;
         const product = products[index];
         modalImg.src = product.imageUrl;
-        modalImg.onerror = () => { modalImg.src = 'placeholder.png'; };
+        modalImg.onerror = () => { modalImg.src = 'Image/placeholder.png'; };
         modalName.textContent = product.name;
         modalDescription.textContent = product.description;
         modalPrice.textContent = `Prix: ${product.price}`;

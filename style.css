@@ -235,17 +235,3 @@ tbody tr.selected {
     font-size: 1rem;
     color: #aaa;
 }
-
-.product-button {
-    padding: 6px 12px;
-    font-size: 1rem;
-    background-color: #ffffff;
-    color: #333;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.product-button:hover {
-    background-color: #f0f0f0;
-}
