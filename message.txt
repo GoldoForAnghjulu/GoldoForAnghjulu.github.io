@@ -1,0 +1,9 @@
+CLG835H – Puissance moteur : 93 kW – Puissance de levage : 105 kN
+CLG856 – Puissance moteur : 162 kW – Puissance de levage : 180 kN
+CLG856H – Puissance moteur : 160 kW – Puissance de levage : 175 kN
+Komatsu WA320 – Puissance moteur : 127 kW – Puissance de levage : 142 kN
+LG928 – (non trouvé pour l’instant, possible confusion de modèle)
+LG936L – Puissance moteur : 92 kW – Puissance de levage : 96 kN
+LG956F – Puissance moteur : 162 kW – Puissance de levage : 180 kN
+LG956L – Puissance moteur : 162 kW – Puissance de levage : 180 kN
+
