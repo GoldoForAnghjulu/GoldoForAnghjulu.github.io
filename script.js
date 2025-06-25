@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const productImageEl = document.getElementById('product-image');
     const productListContainer = document.getElementById('product-list');
     const searchBar = document.getElementById('search-bar');
+    const productView = document.getElementById('product-view');
+    const productViewContainer = document.getElementById('product-view-container');
+    const sidebar = document.querySelector('.sidebar');
 
     let products = [];
     let currentIndex = -1;
@@ -31,8 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 
-                const imageName = `${name.toLowerCase().replace(/[\s–]+/g, '-')}.png`;
-                const imageUrl = `/images/${imageName}`;
+                const imageName = name.toLowerCase().replace(/[\s–]+/g, '-').replace('komatsu-','');
+                const imageUrl = `/images/${imageName}.png`;
                 
                 return { name, moteur, levage, imageUrl };
             });
@@ -66,32 +69,29 @@ document.addEventListener('DOMContentLoaded', () => {
         renderProductList(filteredProducts);
     }
 
-    function updateProductView(index, direction = 0) {
+    function updateProductView(index) {
         if (index === currentIndex || index < 0 || index >= products.length) return;
 
         const oldIndex = currentIndex;
         currentIndex = index;
 
         const product = products[currentIndex];
+
+        const selectedButton = productListContainer.querySelector(`.list-item[data-index='${currentIndex}']`);
         
         const timeline = gsap.timeline();
-        const imageX = direction === 1 ? -100 : (direction === -1 ? 100 : 0);
-        const textY = direction === 1 ? -30 : (direction === -1 ? 30 : 0);
-
-        timeline
-            .to([productNameEl, productMoteurEl, productLevageEl], {
+        
+        // Hide old content
+        if (oldIndex !== -1) {
+             timeline.to(productView, {
                 autoAlpha: 0,
-                y: -textY,
+                scale: 0.95,
                 duration: 0.3,
                 ease: 'power2.in'
-            })
-            .to(productImageEl, {
-                autoAlpha: 0,
-                xPercent: imageX,
-                duration: 0.3,
-                ease: 'power2.in'
-            }, "<");
-
+            });
+        }
+       
+        // Update content and position
         timeline.call(() => {
             productNameEl.textContent = product.name;
             productMoteurEl.textContent = product.moteur;
@@ -99,41 +99,48 @@ document.addEventListener('DOMContentLoaded', () => {
             productImageEl.src = product.imageUrl;
             productImageEl.onerror = () => { productImageEl.src = '/images/placeholder.png'; };
 
+            if (selectedButton) {
+                 if (window.innerWidth > 900) {
+                    const containerRect = productViewContainer.getBoundingClientRect();
+                    const buttonRect = selectedButton.getBoundingClientRect();
+                    const desiredTop = (buttonRect.top - containerRect.top) + (buttonRect.height / 2);
+                    
+                    productView.style.top = `${desiredTop}px`;
+                } else {
+                    productView.style.top = '0px'; // Reset for mobile
+                }
+            }
+
             // Update selector states
             const selectors = document.querySelectorAll('.list-item');
             selectors.forEach(sel => {
-                if (parseInt(sel.dataset.index) === oldIndex) sel.classList.remove('selected');
-                if (parseInt(sel.dataset.index) === currentIndex) sel.classList.add('selected');
+                sel.classList.remove('selected');
             });
-            const selectedButton = productListContainer.querySelector(`.list-item[data-index='${currentIndex}']`);
-            if (selectedButton) {
+             if(selectedButton) {
+                selectedButton.classList.add('selected');
                 selectedButton.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         });
-
-        timeline
-            .fromTo([productNameEl, productMoteurEl, productLevageEl], 
-                { autoAlpha: 0, y: textY },
-                { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.05, ease: 'power2.out' }
-            )
-            .fromTo(productImageEl, 
-                { autoAlpha: 0, xPercent: -imageX },
-                { autoAlpha: 1, xPercent: 0, duration: 0.5, ease: 'power2.out' },
-                "<");
+        
+        // Show new content
+        timeline.to(productView, {
+                autoAlpha: 1,
+                scale: 1,
+                duration: 0.5,
+                ease: 'power2.out'
+        });
     }
 
     function handleKeyDown(e) {
         if (document.activeElement === searchBar) return;
 
         let newIndex = currentIndex;
-        let direction = 0;
         
         const currentListItems = Array.from(productListContainer.querySelectorAll('.list-item'));
         const visibleIndices = currentListItems.map(item => parseInt(item.dataset.index));
         if (visibleIndices.length === 0) return;
         
         const currentInListIndex = visibleIndices.indexOf(currentIndex);
-
 
         if (e.key === 'ArrowDown') {
             e.preventDefault();
@@ -142,7 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
                  nextInListIndex = 0; // wrap to top
             }
             newIndex = visibleIndices[nextInListIndex];
-            direction = -1;
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
             let prevInListIndex = currentInListIndex - 1;
@@ -150,18 +156,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 prevInListIndex = visibleIndices.length - 1; // wrap to bottom
             }
             newIndex = visibleIndices[prevInListIndex];
-            direction = 1;
         } else {
             return;
         }
         
         if (newIndex !== currentIndex) {
-            updateProductView(newIndex, direction);
+            updateProductView(newIndex);
         }
     }
 
     async function init() {
-        gsap.set([productNameEl, productMoteurEl, productLevageEl, productImageEl], { autoAlpha: 0 });
+        gsap.set(productView, { autoAlpha: 0, scale: 0.95 });
         products = await fetchAndParseProducts();
         if (products.length > 0) {
             renderProductList(products);
