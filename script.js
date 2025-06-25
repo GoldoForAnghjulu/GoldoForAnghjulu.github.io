@@ -1,21 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Références aux éléments du DOM pour la vue principale (utilisée sur mobile)
     const productNameEl = document.getElementById('product-name');
     const productMoteurEl = document.getElementById('product-moteur');
     const productLevageEl = document.getElementById('product-levage');
     const productImageEl = document.getElementById('product-image');
+    
+    // Références aux conteneurs et à la barre de recherche
     const productListContainer = document.getElementById('product-list');
     const searchBar = document.getElementById('search-bar');
+    const productView = document.getElementById('product-view');
 
     let products = [];
-    let currentIndex = -1;
+    let currentSelectedIndex = -1; // Pour suivre l'élément sélectionné
 
+    // La fonction de fetch reste la même, elle est très bien !
     async function fetchAndParseProducts() {
         try {
             const response = await fetch('/message.txt');
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const text = await response.text();
             
-            return text.trim().split('\n').filter(line => line).map(line => {
+            return text.trim().split('\n').filter(line => line).map((line, index) => {
                 const parts = line.split('–').map(p => p.trim());
                 const name = parts[0];
                 let moteur = 'Information non disponible';
@@ -34,140 +39,168 @@ document.addEventListener('DOMContentLoaded', () => {
                 const imageName = `${name.toLowerCase().replace(/[\s–]+/g, '-')}.png`;
                 const imageUrl = `/images/${imageName}`;
                 
-                return { name, moteur, levage, imageUrl };
+                return { id: index, name, moteur, levage, imageUrl };
             });
         } catch (error) {
             console.error("Failed to fetch or parse products:", error);
-            productNameEl.textContent = "Erreur";
-            productMoteurEl.textContent = "Impossible de charger les données des produits.";
+            productView.innerHTML = `<p style="color:red;">Erreur de chargement des produits.</p>`;
             return [];
         }
     }
 
+    // --- NOUVELLE FONCTION : Crée la liste avec les pop-ups ---
     function renderProductList(filteredProducts) {
-        productListContainer.innerHTML = '';
+        productListContainer.innerHTML = ''; // On vide la liste
+        
         filteredProducts.forEach(product => {
-            const originalIndex = products.findIndex(p => p.name === product.name);
+            // Crée le conteneur qui aura la position relative
+            const itemContainer = document.createElement('div');
+            itemContainer.className = 'product-item-container';
+
+            // Crée le bouton
             const button = document.createElement('button');
             button.className = 'list-item';
             button.textContent = product.name;
-            button.dataset.index = originalIndex;
-            if (originalIndex === currentIndex) {
+            button.dataset.index = product.id; // On utilise l'ID unique
+            if (product.id === currentSelectedIndex) {
                 button.classList.add('selected');
             }
-            button.addEventListener('click', () => updateProductView(originalIndex));
-            productListContainer.appendChild(button);
+
+            // Crée le pop-up de détails (caché par défaut)
+            const popup = document.createElement('div');
+            popup.className = 'popup-details';
+            popup.innerHTML = `
+                <img src="${product.imageUrl}" alt="Image de ${product.name}" onerror="this.src='/images/placeholder.png'">
+                <div class="popup-details-info">
+                    <h3>${product.name}</h3>
+                    <p>${product.moteur}</p>
+                    <p>${product.levage}</p>
+                </div>
+            `;
+
+            // Ajoute le bouton et le pop-up au conteneur, puis à la liste
+            itemContainer.appendChild(button);
+            itemContainer.appendChild(popup);
+            productListContainer.appendChild(itemContainer);
         });
     }
+    
+    // --- NOUVELLE LOGIQUE DE CLIC ---
+    productListContainer.addEventListener('click', (event) => {
+        const button = event.target.closest('.list-item');
+        if (!button) return;
 
+        const index = parseInt(button.dataset.index);
+        
+        // Si on est sur mobile, on utilise l'ancienne logique d'affichage principal
+        if (window.innerWidth <= 900) {
+            updateMobileView(index);
+        } else {
+            // Sinon, on gère les pop-ups
+            togglePopup(button);
+        }
+    });
+
+    function togglePopup(button) {
+        const popup = button.nextElementSibling;
+        const wasVisible = popup.style.visibility === 'visible';
+
+        // 1. Cacher tous les pop-ups ouverts
+        document.querySelectorAll('.popup-details').forEach(p => {
+            gsap.to(p, { autoAlpha: 0, x: -20, duration: 0.2, ease: 'power2.in' });
+        });
+
+        // 2. Retirer la classe 'selected' de tous les boutons
+        document.querySelectorAll('.list-item').forEach(b => b.classList.remove('selected'));
+        
+        // 3. Si le pop-up cliqué n'était pas déjà visible, on l'affiche
+        if (!wasVisible) {
+            button.classList.add('selected');
+            currentSelectedIndex = parseInt(button.dataset.index);
+            gsap.fromTo(popup, 
+                { autoAlpha: 0, x: -20 }, 
+                { autoAlpha: 1, x: 0, duration: 0.3, ease: 'power2.out' }
+            );
+        } else {
+             currentSelectedIndex = -1; // Désélectionner
+        }
+    }
+    
+    // Fonction pour mettre à jour la vue principale (uniquement sur mobile)
+    function updateMobileView(index) {
+        if (index === currentSelectedIndex || index < 0 || index >= products.length) return;
+        currentSelectedIndex = index;
+        
+        const product = products[currentSelectedIndex];
+        
+        // Mettre à jour la classe 'selected'
+        document.querySelectorAll('.list-item').forEach(b => b.classList.remove('selected'));
+        document.querySelector(`.list-item[data-index='${index}']`).classList.add('selected');
+
+        // Animation GSAP pour la vue mobile
+        const tl = gsap.timeline();
+        tl.to([productNameEl, productMoteurEl, productLevageEl, productImageEl], { autoAlpha: 0, duration: 0.2 })
+          .call(() => {
+              productNameEl.textContent = product.name;
+              productMoteurEl.textContent = product.moteur;
+              productLevageEl.textContent = product.levage;
+              productImageEl.src = product.imageUrl;
+              productImageEl.onerror = () => { productImageEl.src = '/images/placeholder.png'; };
+          })
+          .to([productNameEl, productMoteurEl, productLevageEl, productImageEl], { autoAlpha: 1, duration: 0.3, stagger: 0.05 });
+    }
+
+    // La recherche reste la même
     function handleSearch() {
         const query = searchBar.value.toLowerCase();
         const filteredProducts = products.filter(product => product.name.toLowerCase().includes(query));
         renderProductList(filteredProducts);
     }
-
-    function updateProductView(index, direction = 0) {
-        if (index === currentIndex || index < 0 || index >= products.length) return;
-
-        const oldIndex = currentIndex;
-        currentIndex = index;
-
-        const product = products[currentIndex];
-        
-        const timeline = gsap.timeline();
-        const imageX = direction === 1 ? -100 : (direction === -1 ? 100 : 0);
-        const textY = direction === 1 ? -30 : (direction === -1 ? 30 : 0);
-
-        timeline
-            .to([productNameEl, productMoteurEl, productLevageEl], {
-                autoAlpha: 0,
-                y: -textY,
-                duration: 0.3,
-                ease: 'power2.in'
-            })
-            .to(productImageEl, {
-                autoAlpha: 0,
-                xPercent: imageX,
-                duration: 0.3,
-                ease: 'power2.in'
-            }, "<");
-
-        timeline.call(() => {
-            productNameEl.textContent = product.name;
-            productMoteurEl.textContent = product.moteur;
-            productLevageEl.textContent = product.levage;
-            productImageEl.src = product.imageUrl;
-            productImageEl.onerror = () => { productImageEl.src = '/images/placeholder.png'; };
-
-            // Update selector states
-            const selectors = document.querySelectorAll('.list-item');
-            selectors.forEach(sel => {
-                if (parseInt(sel.dataset.index) === oldIndex) sel.classList.remove('selected');
-                if (parseInt(sel.dataset.index) === currentIndex) sel.classList.add('selected');
-            });
-            const selectedButton = productListContainer.querySelector(`.list-item[data-index='${currentIndex}']`);
-            if (selectedButton) {
-                selectedButton.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        });
-
-        timeline
-            .fromTo([productNameEl, productMoteurEl, productLevageEl], 
-                { autoAlpha: 0, y: textY },
-                { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.05, ease: 'power2.out' }
-            )
-            .fromTo(productImageEl, 
-                { autoAlpha: 0, xPercent: -imageX },
-                { autoAlpha: 1, xPercent: 0, duration: 0.5, ease: 'power2.out' },
-                "<");
-    }
-
+    
+    // On garde la navigation au clavier (simplifiée pour sélectionner)
     function handleKeyDown(e) {
-        if (document.activeElement === searchBar) return;
+        if (document.activeElement === searchBar || !['ArrowDown', 'ArrowUp'].includes(e.key)) return;
+        e.preventDefault();
 
-        let newIndex = currentIndex;
-        let direction = 0;
+        const visibleItems = Array.from(productListContainer.querySelectorAll('.list-item'));
+        if (visibleItems.length === 0) return;
+
+        let currentIndexInList = visibleItems.findIndex(item => parseInt(item.dataset.index) === currentSelectedIndex);
         
-        const currentListItems = Array.from(productListContainer.querySelectorAll('.list-item'));
-        const visibleIndices = currentListItems.map(item => parseInt(item.dataset.index));
-        if (visibleIndices.length === 0) return;
-        
-        const currentInListIndex = visibleIndices.indexOf(currentIndex);
-
-
         if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            let nextInListIndex = currentInListIndex + 1;
-            if (currentInListIndex === -1 || nextInListIndex >= visibleIndices.length) {
-                 nextInListIndex = 0; // wrap to top
-            }
-            newIndex = visibleIndices[nextInListIndex];
-            direction = -1;
+            currentIndexInList = (currentIndexInList + 1) % visibleItems.length;
         } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            let prevInListIndex = currentInListIndex - 1;
-            if (currentInListIndex === -1 || prevInListIndex < 0) {
-                prevInListIndex = visibleIndices.length - 1; // wrap to bottom
-            }
-            newIndex = visibleIndices[prevInListIndex];
-            direction = 1;
-        } else {
-            return;
+            currentIndexInList = (currentIndexInList - 1 + visibleItems.length) % visibleItems.length;
         }
         
-        if (newIndex !== currentIndex) {
-            updateProductView(newIndex, direction);
+        const targetButton = visibleItems[currentIndexInList];
+        targetButton.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+        if (window.innerWidth <= 900) {
+            updateMobileView(parseInt(targetButton.dataset.index));
+        } else {
+            togglePopup(targetButton);
         }
     }
+    
+    // Clic en dehors pour fermer les pop-ups
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('.product-item-container')) {
+            document.querySelectorAll('.popup-details').forEach(p => {
+                gsap.to(p, { autoAlpha: 0, x: -20, duration: 0.2, ease: 'power2.in' });
+            });
+            document.querySelectorAll('.list-item').forEach(b => b.classList.remove('selected'));
+            currentSelectedIndex = -1;
+        }
+    });
 
     async function init() {
-        gsap.set([productNameEl, productMoteurEl, productLevageEl, productImageEl], { autoAlpha: 0 });
         products = await fetchAndParseProducts();
         if (products.length > 0) {
             renderProductList(products);
             searchBar.addEventListener('input', handleSearch);
             document.addEventListener('keydown', handleKeyDown);
-            updateProductView(0);
+            // On ne sélectionne plus de produit par défaut pour ne pas avoir un pop-up dès le début
         }
     }
 
