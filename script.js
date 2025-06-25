@@ -34,8 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 
-                const imageName = name.toLowerCase().replace(/[\s–]+/g, '-').replace('komatsu-','');
-                const imageUrl = `/images/${imageName}.png`;
+                const imageName = name.toLowerCase().replace(/[\s–]+/g, '-');
+                const imageUrl = `./images/${imageName}.png`;
                 
                 return { name, moteur, levage, imageUrl };
             });
