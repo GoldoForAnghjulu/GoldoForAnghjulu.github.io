@@ -125,3 +125,5 @@ PC56 – Puissance moteur : 36.5 kW – Force d’arrachement : 40.2 kN
 PC70-8 – Puissance moteur : 50.7 kW – Force d’arrachement : 54.8 kN
 
 PC78US – Puissance moteur : 51 kW – Force
+
+Rien - RAS.
