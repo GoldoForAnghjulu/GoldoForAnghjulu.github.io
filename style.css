@@ -193,9 +193,15 @@ header p {
     background-color: rgba(255, 255, 255, 0.08);
 }
 
-#product-list {
+#product-list-container {
+    padding-top: 1rem;
     flex-grow: 1;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+#product-list {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
