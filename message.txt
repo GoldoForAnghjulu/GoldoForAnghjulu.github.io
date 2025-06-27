@@ -6,8 +6,6 @@ CLG856H – Puissance moteur : 160 kW – Puissance de levage : 175 kN
 
 Komatsu WA320 – Puissance moteur : 127 kW – Puissance de levage : 142 kN
 
-LG928 – (non trouvé pour l’instant, possible confusion de modèle)
-
 LG936L – Puissance moteur : 92 kW – Puissance de levage : 96 kN
 
 LG956F – Puissance moteur : 162 kW – Puissance de levage : 180 kN
@@ -46,8 +44,6 @@ Cat 308E2 – Puissance moteur : 48.5 kW – Force d’arrachement : 60.2 kN
 
 Cat 312D – Puissance moteur : 67 kW – Force d’arrachement : 96 kN
 
-Cat 315D – Puissance moteur : 91 kW – Force d’arrachement : non spécifiée
-
 Cat 320C – Puissance moteur : 103 kW – Force d’arrachement : 113 kN
 
 Cat 320CL – Puissance moteur : 103 kW – Force d’arrachement : 113 kN
@@ -74,11 +70,11 @@ Cat 336D2L – Puissance moteur : 208 kW – Force d’arrachement : 211.1 k
 
 Cat E70B – Puissance moteur : 45 kW – Force d’arrachement : environ 65 kN
 
-Cat 420F – Puissance moteur : 70 kW – Force d’arrachement : 66 kN (godet)
+Cat 420F – Puissance moteur : 70 kW – Force d’arrachement : 66 kN
 
-JCB 3CX – Puissance moteur : 68.6 kW – Force d’arrachement : 61.9 kN (godet)
+JCB 3CX – Puissance moteur : 68.6 kW – Force d’arrachement : 61.9 kN
 
-JCB 4CX – Puissance moteur : 81 kW – Force d’arrachement : 64.7 kN (godet)
+JCB 4CX – Puissance moteur : 81 kW – Force d’arrachement : 64.7 kN
 
 DH60-7 – Puissance moteur : 40.5 kW – Force d’arrachement : 44 kN
 
@@ -125,5 +121,3 @@ PC56 – Puissance moteur : 36.5 kW – Force d’arrachement : 40.2 kN
 PC70-8 – Puissance moteur : 50.7 kW – Force d’arrachement : 54.8 kN
 
 PC78US – Puissance moteur : 51 kW – Force
-
-Rien - RAS.
