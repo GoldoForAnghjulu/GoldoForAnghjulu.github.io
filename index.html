@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catalogue d'Équipements Futura</title>
+    <title>NG Méca-Services - Accueil</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -12,36 +12,24 @@
     <div id="background-animation"></div>
     <div class="vignette"></div>
 
-    <div class="container">
-        <header>
-            <h1>Catalogue d'Équipements</h1>
-            <p>Explorez nos modèles en les sélectionnant dans la liste ou utilisez la recherche.</p>
+    <div class="container welcome-container">
+        <header class="welcome-header">
+            <h1>NG Méca-Services</h1>
+            <p class="subtitle">by NG Isopure</p>
         </header>
 
-        <div class="main-content">
-            <aside class="sidebar">
-                <div class="search-container">
-                    <input type="text" id="search-bar" placeholder="Rechercher un modèle...">
-                </div>
-                <nav id="product-list">
-                    <!-- Les produits seront insérés ici par JavaScript -->
-                </nav>
-            </aside>
-            <main id="product-view-container">
-                <div id="product-view">
-                    <div class="product-details">
-                        <div class="details-content">
-                            <h2 id="product-name"></h2>
-                            <p id="product-moteur"></p>
-                            <p id="product-levage"></p>
-                        </div>
-                    </div>
-                    <div class="product-image-container">
-                         <img id="product-image" src="" alt="Image du produit">
-                    </div>
-                </div>
-            </main>
-        </div>
+        <main class="welcome-content">
+            <p>NG Méca-Services vous propose différents modèles disponibles pour l’Europe.</p>
+            <p>Tous nos engins sont disponibles dans une version européenne entièrement actualisée.</p>
+            <p>Nous assurons une garantie de 2 ans, dans vos installations ou chez l’un de nos partenaires agréés.</p>
+            <p>Les disponibilités de notre matériel d’occasion peuvent varier selon les ouvrages. Les prix peuvent fluctuer en fonction de l’année et du nombre d’heures au compteur.</p>
+            <p>Nos produits de marque Luke sont disponibles uniquement en neuf, avec une garantie de 2 ans et une extension de garantie de 5 ans disponible.</p>
+            <p>Nous pouvons également proposer un financement approprié.</p>
+        </main>
+
+        <footer class="welcome-footer">
+            <a href="catalogue.html" class="cta-button">Explorer le Catalogue</a>
+        </footer>
     </div>
 
     <div class="modal-overlay">
@@ -57,6 +45,24 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.to('.welcome-container', {
+                duration: 1.2,
+                opacity: 1,
+                y: 0,
+                ease: 'power3.out',
+                delay: 0.2
+            });
+            gsap.from('.welcome-header, .welcome-content > p, .welcome-footer', {
+                duration: 1,
+                autoAlpha: 0,
+                y: 20,
+                stagger: 0.1,
+                ease: 'power3.out',
+                delay: 0.4 // Start after container starts fading in
+            });
+        });
+    </script>
 </body>
 </html>

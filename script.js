@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 const imageName = name.toLowerCase().replace(/[\s–]+/g, '-');
-                const imageUrl = `./images/${imageName}.png`;
+                const imageUrl = `images/${imageName}.png`;
                 
                 return { name, moteur, levage, imageUrl };
             });
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
             productMoteurEl.textContent = product.moteur;
             productLevageEl.textContent = product.levage;
             productImageEl.src = product.imageUrl;
-            productImageEl.onerror = () => { productImageEl.src = '/images/placeholder.png'; };
+            productImageEl.onerror = () => { productImageEl.src = 'images/placeholder.png'; };
 
             if (selectedButton) {
                  if (window.innerWidth > 900) {

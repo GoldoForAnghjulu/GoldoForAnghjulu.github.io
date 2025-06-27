@@ -8,6 +8,28 @@
     --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
+/* General Link Style */
+a {
+    color: var(--highlight-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+a:hover {
+    color: #3f9cff;
+}
+
+.back-link {
+    position: fixed;
+    top: 2rem;
+    left: 2rem;
+    font-weight: 500;
+    z-index: 100;
+    background: rgba(0,0,0,0.3);
+    padding: 8px 16px;
+    border-radius: 980px;
+    backdrop-filter: blur(5px);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -53,7 +75,53 @@ body {
     }
 }
 
-.container {
+.welcome-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 100vh;
+    padding: 2rem;
+    width: 100%; /* Ensure it takes full width */
+    opacity: 0; /* Start invisible for fade-in */
+}
+
+.welcome-header {
+    margin-bottom: 2rem;
+}
+
+.welcome-header h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    letter-spacing: -2px;
+    color: var(--primary-color);
+}
+
+.welcome-header .subtitle {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--secondary-text-color);
+    margin-top: 0.5rem;
+}
+
+.welcome-content {
+    max-width: 700px;
+    margin-bottom: 3rem;
+}
+
+.welcome-content p {
+    font-size: 1.1rem;
+    color: var(--secondary-text-color);
+    margin-bottom: 1.2rem;
+    line-height: 1.7;
+}
+
+.welcome-footer {
+    margin-top: 1rem;
+}
+
+.catalogue-container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
